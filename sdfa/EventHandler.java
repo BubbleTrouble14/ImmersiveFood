@@ -1,22 +1,24 @@
 package bubbletrouble;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
-import net.minecraftforge.items.IItemHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod.EventBusSubscriber
-public class EventHandler 
-{
-	private Map<Integer, TickStorage> tick = new HashMap<>();
-	
-	public static void checkInventoryForDecayable(IItemHandler inventory) {
-		 for (int i = 0; i < inventory.getSlots(); i++) {
+public class EventHandler {
+
+	private static Map<Integer, TickStorage> tick = new HashMap<>();
+
+	public static void checkInventoryForDecayable(IInventory inventory) {
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null)) {
 				IFoodDecay foodDecay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
@@ -24,10 +26,9 @@ public class EventHandler
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
-	public void onUpdateEvent(WorldTickEvent event)
-	{
+	public static void onUpdateEvent(WorldTickEvent event) {
 		if (event.phase == Phase.START) {
 			TickStorage t = tick.get(event.world.provider.getDimension());
 			if (t == null) {
@@ -37,8 +38,8 @@ public class EventHandler
 			if (t.tick > 20) {
 				t.tick = 0;
 				for (int i = 0; i < event.world.loadedTileEntityList.size(); i++) {
-					if (event.world.loadedTileEntityList.get(i) instanceof IItemHandler) {
-						checkInventoryForDecayable((IItemHandler) event.world.loadedTileEntityList.get(i));
+					if (event.world.loadedTileEntityList.get(i) instanceof IInventory) {
+						checkInventoryForDecayable((IInventory) event.world.loadedTileEntityList.get(i));
 					}
 				}
 			} else {
@@ -46,7 +47,16 @@ public class EventHandler
 			}
 		}
 	}
-	
+
+	@SubscribeEvent
+	public static void onItemPickedUp(ItemPickupEvent event) {
+		ItemStack stack = event.pickedUp.getItem();
+		if (stack.getItem() instanceof ItemFood) {
+			IFoodDecay food_decay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
+			food_decay.setDecayTime(10 * 20);
+		}
+	}
+
 	public static class TickStorage {
 		private int tick;
 	}
