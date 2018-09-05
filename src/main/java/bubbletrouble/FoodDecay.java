@@ -32,7 +32,7 @@ public class FoodDecay implements IFoodDecay
 
 	@Override
 	public boolean shouldRemove() {
-		float decayStart = getDecayStart();
+		long decayStart = getDecayStart();
 		return decayStart >= 0 && getRemovalTime() <= Main.proxy().getWorldTime();
 	}
 
@@ -66,8 +66,11 @@ public class FoodDecay implements IFoodDecay
 
 	@Override
 	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack) {
-		if (getDecayStart() < 0) setDecayStart(Main.proxy().getWorldTime());
-		setDecayModifier(decayModifier);
+		if (getDecayStart() < 0) 
+		{
+			setDecayStart(Main.proxy().getWorldTime());
+		}
+		//setDecayModifier(decayModifier);
 		if (shouldRemove()) {
 			stack.shrink(1);
 			setDecayStart(Main.proxy().getWorldTime());

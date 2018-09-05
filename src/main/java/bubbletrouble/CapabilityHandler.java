@@ -15,7 +15,7 @@ public class CapabilityHandler
     {
     	if(event.getObject().getItem() instanceof ItemFood)
     	{
-    		event.addCapability(FOODDECAY_CAP, new FoodDecayCapability(10*20));
+    		event.addCapability(FOODDECAY_CAP, new FoodDecayCapability(2000000, Main.proxy.getWorldTime()));
     	}
     }
 }

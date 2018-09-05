@@ -8,6 +8,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
@@ -24,6 +25,7 @@ public class EventHandler
 		{
 			if(stack.getItem() instanceof ItemFood)
 			{
+				System.out.println(stack);
 				IFoodDecay food_decay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
 				event.getToolTip().add(String.valueOf(food_decay.getDecayTimeLeft()));
 			}
@@ -49,6 +51,17 @@ public class EventHandler
 			} else {
 				t.tick++;
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onItemPickedUp(ItemPickupEvent event)
+	{
+		ItemStack stack = event.pickedUp.getItem();
+		if(stack.getItem() instanceof ItemFood)
+		{
+			IFoodDecay food_decay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
+			food_decay.setDecayTime(10*20);
 		}
 	}
 	
