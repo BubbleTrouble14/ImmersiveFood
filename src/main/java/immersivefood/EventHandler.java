@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 @Mod.EventBusSubscriber
@@ -23,13 +24,40 @@ public class EventHandler {
 	public static void checkInventoryForDecayable(IInventory inventory, World world) {
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null)) {
+			if (stack.getItem() instanceof ItemFood && stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null))
+			{
 				IFoodDecay foodDecay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
 				foodDecay.decayTick(inventory, i, 1, stack, world);
 			}
 		}
 	}
 
+	private static int tick_player = 0;
+	
+	@SubscribeEvent
+	public static void onPlayerEvent(PlayerTickEvent event)
+	{
+		if (event.phase == Phase.START) {
+			if (tick_player > 20) {
+				tick_player = 0;
+				for (int i = 0; i < event.player.inventory.getSizeInventory(); i++) {
+					ItemStack stack = event.player.inventory.getStackInSlot(i);
+					if (stack.getItem() instanceof ItemFood && stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null))
+					{
+						IFoodDecay foodDecay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
+						if (foodDecay.getDecayStart() < 0) 
+						{
+							foodDecay.setDecayStart(Main.proxy().getWorldTime());
+						}
+						foodDecay.decayTick(event.player.inventory, i, 1, stack, event.player.world);
+					}
+				}
+			} else {
+				tick_player++;
+			}
+		}
+	}
+	
 	@SubscribeEvent
 	public static void onUpdateEvent(WorldTickEvent event) {
 		if (event.phase == Phase.START) {

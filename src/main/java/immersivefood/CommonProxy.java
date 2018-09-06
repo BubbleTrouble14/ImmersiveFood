@@ -9,7 +9,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 public abstract class CommonProxy {
 
 	public void preInit() {
-		CapabilityManager.INSTANCE.register(IFoodDecay.class, new IFoodDecayStorage(), FoodDecay.class);
+	//	CapabilityManager.INSTANCE.register(IFoodDecay.class, new IFoodDecayStorage(), FoodDecay.class);
+	    CapabilityManager.INSTANCE.register(IFoodDecay.class, new IFoodDecayStorage(), FoodDecay::new);
 	}
 
 	public void init() {

@@ -22,6 +22,6 @@ public class IFoodDecayStorage implements IStorage<IFoodDecay>
 	{
 		final NBTTagCompound tag = (NBTTagCompound) nbt;
 		instance.setDecayStart(tag.getLong("decayStart"));
-		instance.setDecayStart(tag.getLong("decayModifier"));
+		instance.setDecayModifier(tag.getLong("decayModifier"));
 	}
 }

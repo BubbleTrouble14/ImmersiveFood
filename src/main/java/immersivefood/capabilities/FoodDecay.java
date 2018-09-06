@@ -61,17 +61,17 @@ public class FoodDecay implements IFoodDecay
 
 	@Override
 	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack, World world) {
-		if (world.isRemote || world.getTotalWorldTime() % 20 != 0) return;
+		//if (world.isRemote || world.getTotalWorldTime() % 20 != 0) return;
 		decayTick(inventory, slotId, decayModifier, stack);		
 	}
 
 	@Override
 	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack) {
+		//setDecayModifier(decayModifier);
 		if (getDecayStart() < 0) 
 		{
 			setDecayStart(Main.proxy().getWorldTime());
 		}
-		//setDecayModifier(decayModifier);
 		if (shouldRemove()) {
 			stack.shrink(1);
 			setDecayStart(Main.proxy().getWorldTime());
