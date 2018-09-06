@@ -15,7 +15,7 @@ public class ClientEventHandler {
 	public static void tooltipEvent(ItemTooltipEvent event) {
 		ItemStack stack = event.getItemStack();
 		if (event.getEntityPlayer() != null) {
-			if (stack.getItem() instanceof ItemFood) {
+			if (stack.getItem() instanceof ItemFood && !Main.proxy().playerIsInCreativeMode(event.getEntityPlayer())) {
 				IFoodDecay food_decay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
 				String ret = formatTime(food_decay.getDecayTimeLeft());
 				event.getToolTip().add("Decomposes in" + ret);
