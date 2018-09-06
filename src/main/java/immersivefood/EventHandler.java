@@ -1,57 +1,50 @@
 package immersivefood;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import immersivefood.capabilities.FoodDecayCapability;
 import immersivefood.capabilities.IFoodDecay;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
 
 	private static Map<Integer, TickStorage> tick = new HashMap<>();
+	private static int tick_player = 0;
 
-	public static void checkInventoryForDecayable(IInventory inventory, World world) {
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+	public static void checkInventoryForDecayable(IItemHandlerModifiable inventory, World world) {
+		for (int i = 0; i < inventory.getSlots(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemFood && stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null))
-			{
+			if (stack.getItem() instanceof ItemFood && stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null)) {
 				IFoodDecay foodDecay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
 				foodDecay.decayTick(inventory, i, 1, stack, world);
 			}
 		}
 	}
 
-	private static int tick_player = 0;
-	
 	@SubscribeEvent
-	public static void onPlayerEvent(PlayerTickEvent event)
-	{
+	public static void onPlayerEvent(PlayerTickEvent event) {
 		if (event.phase == Phase.START) {
 			if (tick_player > 20) {
 				tick_player = 0;
-				if(!Main.proxy().playerIsInCreativeMode(event.player))
-				{
-					for (int i = 0; i < event.player.inventory.getSizeInventory(); i++) {
-						ItemStack stack = event.player.inventory.getStackInSlot(i);
-						if (stack.getItem() instanceof ItemFood && stack.hasCapability(FoodDecayCapability.FOOD_DECAY_CAP, null))
-						{
-							IFoodDecay foodDecay = stack.getCapability(FoodDecayCapability.FOOD_DECAY_CAP, null);
-							if (foodDecay.getDecayStart() < 0) 
-							{
-								foodDecay.setDecayStart(Main.proxy().getWorldTime());
-							}
-							foodDecay.decayTick(event.player.inventory, i, 1, stack, event.player.world);
-						}
+				EntityPlayer player = event.player;
+				if (player.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+					IItemHandler itemHandler = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+					if (itemHandler instanceof IItemHandlerModifiable) {
+						checkInventoryForDecayable((IItemHandlerModifiable) itemHandler, player.world);
 					}
 				}
 			} else {
@@ -59,24 +52,24 @@ public class EventHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onUpdateEvent(WorldTickEvent event) {
 		if (event.phase == Phase.START) {
 			TickStorage t = tick.get(event.world.provider.getDimension());
 			if (t == null) {
-				t = new TickStorage();
+				t = new TickStorage(event.world);
 				tick.put(event.world.provider.getDimension(), t);
 			}
-			if (t.tick > 20) {
-				t.tick = 0;
-				for (int i = 0; i < event.world.loadedTileEntityList.size(); i++) {
-					if (event.world.loadedTileEntityList.get(i) instanceof IInventory) {
-						checkInventoryForDecayable((IInventory) event.world.loadedTileEntityList.get(i), event.world);
+			if (t.shouldTick()) {
+				for (TileEntity tileEntity : event.world.loadedTileEntityList) {
+					if (tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+						IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+						if (itemHandler instanceof IItemHandlerModifiable) {
+							checkInventoryForDecayable((IItemHandlerModifiable) itemHandler, event.world);
+						}
 					}
 				}
-			} else {
-				t.tick++;
 			}
 		}
 	}
@@ -91,6 +84,14 @@ public class EventHandler {
 	}*/
 
 	public static class TickStorage {
-		private int tick;
+		private final World world;
+
+		public TickStorage(World world) {
+			this.world = world;
+		}
+
+		public boolean shouldTick() {
+			return world.getTotalWorldTime() % 20 == 0;
+		}
 	}
 }

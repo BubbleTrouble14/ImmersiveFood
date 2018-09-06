@@ -22,11 +22,12 @@ public class ClientEventHandler {
 			}
 		}
 	}
-	
+
 	public static String formatTime(long ticks) {
-		long seconds = (long) Math.ceil(ticks / 20d);
+		long seconds = (long) Math.ceil(Math.max(ticks, 0) / 20d);
 		String toAdd = "";
-		if (seconds > 0) {
+//		if (seconds > 0)
+		{
 			if (seconds > 59) {
 				long minutes = seconds / 60;
 				seconds = seconds % 60;
@@ -52,15 +53,12 @@ public class ClientEventHandler {
 	}
 }
 
-class I18n
-{
-	public static String format(String key, Object... args)
-	{
+class I18n {
+	public static String format(String key, Object... args) {
 		return net.minecraft.client.resources.I18n.format(key, args);
 	}
 
-	public static String translate(String key)
-	{
+	public static String translate(String key) {
 		return format(key);
 	}
 }

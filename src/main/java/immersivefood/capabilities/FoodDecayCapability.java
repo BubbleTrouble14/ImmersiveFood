@@ -13,8 +13,9 @@ public class FoodDecayCapability implements ICapabilitySerializable<NBTTagCompou
 
 	private IFoodDecay instance = FOOD_DECAY_CAP.getDefaultInstance();
 
-	public FoodDecayCapability(long decayTime) {
+	public FoodDecayCapability(long decayTime, long worldTime) {
 		this.instance.setDecayTime(decayTime);
+		this.instance.setDecayStart(worldTime);
 	}
 
 	@Override

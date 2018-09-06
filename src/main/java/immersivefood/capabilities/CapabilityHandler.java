@@ -10,13 +10,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class CapabilityHandler {
-	
+
 	public static final ResourceLocation FOODDECAY_CAP = new ResourceLocation(Main.MODID, "food_decay");
 
 	@SubscribeEvent
 	public static void attachCapability(AttachCapabilitiesEvent<ItemStack> event) {
 		if (event.getObject().getItem() instanceof ItemFood) {
-			event.addCapability(FOODDECAY_CAP, new FoodDecayCapability(30*20));
+			long worldTime = Main.proxy().getWorldTime();
+			worldTime = worldTime - worldTime % 20;
+			event.addCapability(FOODDECAY_CAP, new FoodDecayCapability(40, worldTime));
 		}
 	}
 }

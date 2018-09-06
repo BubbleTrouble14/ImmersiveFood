@@ -1,12 +1,11 @@
 package immersivefood.capabilities;
 
 import immersivefood.Main;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class FoodDecay implements IFoodDecay
-{
+public class FoodDecay implements IFoodDecay {
 	private long decayStart = -1;
 	private float decayModifier = 1;
 	private long decayTime;
@@ -15,7 +14,12 @@ public class FoodDecay implements IFoodDecay
 	public long getDecayStart() {
 		return decayStart;
 	}
-	
+
+	@Override
+	public void setDecayStart(long decayStart) {
+		this.decayStart = decayStart;
+	}
+
 	@Override
 	public float getDecayModifier() {
 		return decayModifier;
@@ -27,14 +31,9 @@ public class FoodDecay implements IFoodDecay
 	}
 
 	@Override
-	public void setDecayStart(long decayStart) {
-		this.decayStart = decayStart;
-	}
-
-	@Override
 	public boolean shouldRemove() {
-		long decayStart = getDecayStart();
-		return decayStart >= 0 && getRemovalTime() <= Main.proxy().getWorldTime();
+//		long decayStart = getDecayStart();
+		return getRemovalTime() <= Main.proxy().getWorldTime();
 	}
 
 	@Override
@@ -48,34 +47,31 @@ public class FoodDecay implements IFoodDecay
 	}
 
 	@Override
-	public long getDecayTime()
-	{
+	public long getDecayTime() {
 		return this.decayTime;
 	}
-	
+
 	@Override
-	public void setDecayTime(long decayTime)
-	{
+	public void setDecayTime(long decayTime) {
 		this.decayTime = decayTime;
 	}
 
 	@Override
-	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack, World world) {
-		//if (world.isRemote || world.getTotalWorldTime() % 20 != 0) return;
-		decayTick(inventory, slotId, decayModifier, stack);		
+	public void decayTick(IItemHandlerModifiable inventory, int slotId, float decayModifier, ItemStack stack, World world) {
+		if (world.isRemote) return;
+		decayTick(inventory, slotId, decayModifier, stack);
 	}
 
 	@Override
-	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack) {
+	public void decayTick(IItemHandlerModifiable inventory, int slotId, float decayModifier, ItemStack stack) {
 		//setDecayModifier(decayModifier);
-		if (getDecayStart() < 0) 
-		{
-			setDecayStart(Main.proxy().getWorldTime());
-		}
+//		if (getDecayStart() < 0) {
+//			setDecayStart(Main.proxy().getWorldTime());
+//		}
 		if (shouldRemove()) {
 			stack.shrink(1);
 			setDecayStart(Main.proxy().getWorldTime());
-			if (stack.getCount() <= 0) inventory.setInventorySlotContents(slotId, ItemStack.EMPTY);
-		}		
+			if (stack.getCount() <= 0) inventory.setStackInSlot(slotId, ItemStack.EMPTY);
+		}
 	}
 }
