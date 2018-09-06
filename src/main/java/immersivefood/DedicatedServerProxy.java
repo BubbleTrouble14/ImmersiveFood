@@ -1,4 +1,4 @@
-package bubbletrouble;
+package immersivefood;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +15,9 @@ public class DedicatedServerProxy extends CommonProxy {
 		super.init();
 	}
 
+	/**
+	 * Handle interaction with other mods, complete your setup based on this.
+	 */
 	public void postInit() {
 		super.postInit();
 	}

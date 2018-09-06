@@ -1,8 +1,8 @@
-package bubbletrouble;
+package immersivefood.capabilities;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
 
 public interface IFoodDecay 
 {	
@@ -14,9 +14,9 @@ public interface IFoodDecay
 
 	public void setDecayStart(long decayStart);
 	
-	public void decayTick(IItemHandler inventory, int slotId, float decayModifier, ItemStack stack, World world);
-	
-	public void decayTick(IItemHandler inventory, int slotId, float decayModifier, ItemStack stack);
+	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack, World world);
+
+	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack);
 	
 	public boolean shouldRemove();
 

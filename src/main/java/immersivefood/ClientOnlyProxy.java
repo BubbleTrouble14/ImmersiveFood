@@ -1,4 +1,4 @@
-package bubbletrouble;
+package immersivefood;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

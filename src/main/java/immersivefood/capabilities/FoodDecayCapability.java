@@ -1,4 +1,4 @@
-package bubbletrouble;
+package immersivefood.capabilities;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -12,11 +12,10 @@ public class FoodDecayCapability implements ICapabilitySerializable<NBTTagCompou
 	public static final Capability<IFoodDecay> FOOD_DECAY_CAP = null;
 
 	private IFoodDecay instance = FOOD_DECAY_CAP.getDefaultInstance();
-	
-	public FoodDecayCapability(long decayTime, long decayStart)
-	{
-		instance.setDecayTime(decayTime);
-		instance.setDecayStart(decayStart);
+
+	public FoodDecayCapability(long decayTime, long decayStart) {
+		this.instance.setDecayTime(decayTime);
+		this.instance.setDecayStart(decayStart);
 	}
 
 	@Override

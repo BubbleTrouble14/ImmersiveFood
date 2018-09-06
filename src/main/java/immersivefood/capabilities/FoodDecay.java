@@ -1,8 +1,9 @@
-package bubbletrouble;
+package immersivefood.capabilities;
 
+import immersivefood.Main;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
 
 public class FoodDecay implements IFoodDecay
 {
@@ -59,13 +60,13 @@ public class FoodDecay implements IFoodDecay
 	}
 
 	@Override
-	public void decayTick(IItemHandler inventory, int slotId, float decayModifier, ItemStack stack, World world) {
+	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack, World world) {
 		if (world.isRemote || world.getTotalWorldTime() % 20 != 0) return;
 		decayTick(inventory, slotId, decayModifier, stack);		
 	}
 
 	@Override
-	public void decayTick(IItemHandler inventory, int slotId, float decayModifier, ItemStack stack) {
+	public void decayTick(IInventory inventory, int slotId, float decayModifier, ItemStack stack) {
 		if (getDecayStart() < 0) 
 		{
 			setDecayStart(Main.proxy().getWorldTime());
@@ -74,7 +75,7 @@ public class FoodDecay implements IFoodDecay
 		if (shouldRemove()) {
 			stack.shrink(1);
 			setDecayStart(Main.proxy().getWorldTime());
-			if (stack.getCount() <= 0) inventory.insertItem(slotId, ItemStack.EMPTY, false);
+			if (stack.getCount() <= 0) inventory.setInventorySlotContents(slotId, ItemStack.EMPTY);
 		}		
 	}
 }
