@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = Main.MODID, version = Main.VERSION, guiFactory= Main.GUIFACTORY)  //delete guiFactory if MBE70 not present and you don't have a configuration GUI
+@Mod(modid = Main.MODID, version = Main.VERSION)  //delete guiFactory if MBE70 not present and you don't have a configuration GUI
 public class Main
 {
   // you also need to update the modid and version in two other places as well:
@@ -16,7 +16,7 @@ public class Main
    public static final String MODID = "immersivefood";
     public static final String VERSION = "1.12.2a";
 
-    public static final String GUIFACTORY = "immersive_food.mbe70_configuration.MBEGuiFactory"; //delete if MBE70 not present
+   // public static final String GUIFACTORY = "immersivefood.config.IFGuiFactory"; //delete if MBE70 not present
 
     // The instance of your mod that Forge uses.  Optional.
     @Mod.Instance(Main.MODID)
@@ -29,7 +29,7 @@ public class Main
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-      proxy.preInit();
+       proxy.preInit();
     }
 
     @EventHandler
@@ -47,10 +47,5 @@ public class Main
 	public static CommonProxy proxy() {
 		return proxy;
 	}
-    /**
-     * Prepend the name with the mod ID, suitable for ResourceLocations such as textures.
-     * @param name
-     * @return eg "minecraftbyexample:myblockname"
-     */
-    public static String prependModID(String name) {return MODID + ":" + name;}
+
 }

@@ -2,6 +2,7 @@ package immersivefood;
 
 import immersivefood.capabilities.FoodDecayCapability;
 import immersivefood.capabilities.IFoodDecay;
+import immersivefood.util.I18n;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -53,12 +54,3 @@ public class ClientEventHandler {
 	}
 }
 
-class I18n {
-	public static String format(String key, Object... args) {
-		return net.minecraft.client.resources.I18n.format(key, args);
-	}
-
-	public static String translate(String key) {
-		return format(key);
-	}
-}

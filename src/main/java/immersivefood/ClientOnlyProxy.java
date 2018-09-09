@@ -10,6 +10,7 @@ public class ClientOnlyProxy extends CommonProxy
 
   public void preInit()
   {
+    //IFConfiguration.clientPreInit();  // used to set up an event handler for the GUI so that the altered values are
     super.preInit();
   }
 
